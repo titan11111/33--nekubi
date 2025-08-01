@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>忍者寝首討ち ～てっぺん城の殿を打て～</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- タイトル画面 -->
+        <div id="titleScreen">
+            <h1>忍者寝首討ち</h1>
+            <h2>～てっぺん城の殿を打て～</h2>
+            <div class="ninja-title">🥷</div>
+            <button id="startBtn" class="game-btn">参る！</button>
+            <div class="instructions">
+                <p>📱 操作方法：</p>
+                <p>左右タップ：移動</p>
+                <p>長押し：息を止めて隠れる</p>
+                <p>目的：殿様の寝室まで忍び込め！</p>
+            </div>
+        </div>
+
+        <!-- ゲーム画面 -->
+        <div id="gameScreen" style="display: none;">
+            <div id="gameInfo">
+                <div id="score">忍度: 0点</div>
+                <div id="stage">階: 1F</div>
+                <div id="stealth">隠密度: 100%</div>
+            </div>
+            
+            <canvas id="gameCanvas"></canvas>
+            
+            <!-- スマホ操作ボタン -->
+            <div id="mobileControls">
+                <button id="leftBtn" class="control-btn">←</button>
+                <button id="hideBtn" class="control-btn hide-btn">隠</button>
+                <button id="rightBtn" class="control-btn">→</button>
+            </div>
+        </div>
+
+        <!-- クリア画面 -->
+        <div id="clearScreen" style="display: none;">
+            <h1>🎌 見事成敗！ 🎌</h1>
+            <div class="lord-defeated">💤😵</div>
+            <div id="finalScore">忍度: 0点</div>
+            <div id="clearRank">忍者ランク: 見習い</div>
+            <button id="restartBtn" class="game-btn">再び参る</button>
+        </div>
+
+        <!-- ゲームオーバー画面 -->
+        <div id="gameoverScreen" style="display: none;">
+            <h1>😱 見つかった！</h1>
+            <div class="caught">⚔️👹⚔️</div>
+            <p>「何者だ！！」</p>
+            <button id="retryBtn" class="game-btn">再挑戦</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

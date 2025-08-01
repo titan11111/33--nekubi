@@ -1,0 +1,303 @@
+/* 忍者寝首討ちゲーム - スタイルシート */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'MS Gothic', 'Hiragino Sans', sans-serif;
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+  color: #fff;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#gameContainer {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* タイトル画面 */
+#titleScreen {
+  text-align: center;
+  padding: 20px;
+  background: radial-gradient(circle, rgba(0,0,0,0.8), rgba(0,0,0,0.95));
+  border-radius: 20px;
+  border: 3px solid #ffd700;
+  max-width: 90vw;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px #ffd700; }
+  to { box-shadow: 0 0 40px #ffd700, 0 0 60px #ffd700; }
+}
+
+#titleScreen h1 {
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  color: #ffd700;
+  text-shadow: 2px 2px 4px #000;
+  margin-bottom: 10px;
+}
+
+#titleScreen h2 {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  color: #ff6b6b;
+  margin-bottom: 20px;
+}
+
+.ninja-title {
+  font-size: clamp(3rem, 10vw, 6rem);
+  margin: 20px 0;
+  animation: bounce 1s ease-in-out infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0px); }
+  to { transform: translateY(-10px); }
+}
+
+.instructions {
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 10px;
+  margin: 20px 0;
+  font-size: clamp(0.8rem, 2.5vw, 1rem);
+}
+
+.instructions p {
+  margin: 5px 0;
+}
+
+/* ゲームボタン */
+.game-btn {
+  background: linear-gradient(45deg, #ff6b6b, #ffd700);
+  border: none;
+  color: #000;
+  font-size: clamp(1rem, 4vw, 1.5rem);
+  font-weight: bold;
+  padding: 15px 30px;
+  border-radius: 25px;
+  cursor: pointer;
+  margin: 10px;
+  box-shadow: 0 4px 15px rgba(255,107,107,0.4);
+  transition: all 0.3s ease;
+}
+
+.game-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(255,107,107,0.6);
+}
+
+.game-btn:active {
+  transform: translateY(1px);
+}
+
+/* ゲーム画面 */
+#gameScreen {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+#gameInfo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 1000;
+  font-size: clamp(0.8rem, 3vw, 1.2rem);
+  font-weight: bold;
+  text-shadow: 2px 2px 4px #000;
+}
+
+#gameInfo div {
+  background: rgba(0,0,0,0.7);
+  padding: 8px 12px;
+  border-radius: 15px;
+  border: 2px solid #ffd700;
+}
+
+#gameCanvas {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+/* スマホ操作ボタン */
+#mobileControls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 15px;
+  z-index: 1000;
+}
+
+.control-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid #ffd700;
+  background: rgba(0,0,0,0.8);
+  color: #ffd700;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  transition: all 0.2s ease;
+}
+
+.control-btn:active {
+  background: rgba(255,215,0,0.3);
+  transform: scale(1.1);
+}
+
+.hide-btn {
+  background: rgba(255,0,0,0.8);
+  color: #fff;
+}
+
+.hide-btn:active {
+  background: rgba(255,0,0,1);
+}
+
+/* クリア画面 */
+#clearScreen {
+  text-align: center;
+  padding: 30px;
+  background: radial-gradient(circle, rgba(0,100,0,0.8), rgba(0,50,0,0.95));
+  border-radius: 20px;
+  border: 3px solid #00ff00;
+  max-width: 90vw;
+  animation: victory 1s ease-in-out;
+}
+
+@keyframes victory {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+#clearScreen h1 {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  color: #00ff00;
+  margin-bottom: 20px;
+}
+
+.lord-defeated {
+  font-size: clamp(3rem, 8vw, 5rem);
+  margin: 20px 0;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+#finalScore, #clearRank {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  margin: 10px 0;
+  color: #ffd700;
+}
+
+/* ゲームオーバー画面 */
+#gameoverScreen {
+  text-align: center;
+  padding: 30px;
+  background: radial-gradient(circle, rgba(100,0,0,0.8), rgba(50,0,0,0.95));
+  border-radius: 20px;
+  border: 3px solid #ff0000;
+  max-width: 90vw;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+#gameoverScreen h1 {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  color: #ff0000;
+  margin-bottom: 20px;
+}
+
+.caught {
+  font-size: clamp(2rem, 6vw, 4rem);
+  margin: 20px 0;
+  animation: flash 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes flash {
+  from { opacity: 1; }
+  to { opacity: 0.5; }
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 480px) {
+  #gameInfo {
+      font-size: 0.9rem;
+  }
+  
+  #gameInfo div {
+      padding: 6px 10px;
+  }
+  
+  .control-btn {
+      width: 50px;
+      height: 50px;
+      font-size: 1.2rem;
+  }
+  
+  #mobileControls {
+      gap: 10px;
+      bottom: 15px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  #titleScreen, #clearScreen, #gameoverScreen {
+      padding: 15px;
+      max-height: 90vh;
+      overflow-y: auto;
+  }
+  
+  .instructions {
+      padding: 10px;
+      margin: 10px 0;
+  }
+  
+  .ninja-title, .lord-defeated, .caught {
+      font-size: 3rem;
+      margin: 10px 0;
+  }
+}
+
+/* タッチデバイス最適化 */
+@media (hover: none) and (pointer: coarse) {
+  .game-btn {
+      padding: 20px 40px;
+      font-size: 1.2rem;
+  }
+  
+  .control-btn {
+      width: 65px;
+      height: 65px;
+  }
+}
