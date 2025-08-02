@@ -151,8 +151,10 @@ body {
 
 #directionControls {
   position: relative;
-  width: 156px;
-  height: 156px;
+  /* ボタンのサイズを変えるときはこの変数だけを調整 */
+  --btn-size: 78px;
+  width: calc(var(--btn-size) * 2);
+  height: calc(var(--btn-size) * 2);
 }
 
 #upBtn,
@@ -187,8 +189,8 @@ body {
 }
 
 .control-btn {
-  width: 78px;
-  height: 78px;
+  width: var(--btn-size);
+  height: var(--btn-size);
   border-radius: 50%;
   border: 3px solid #ffd700;
   background: rgba(0,0,0,0.8);
@@ -304,14 +306,11 @@ body {
   }
   
   .control-btn {
-      width: 65px;
-      height: 65px;
       font-size: 1.56rem;
   }
 
   #directionControls {
-      width: 130px;
-      height: 130px;
+      --btn-size: 65px;
   }
 
   #mobileControls {
@@ -347,8 +346,7 @@ body {
       font-size: 1.2rem;
   }
   
-  .control-btn {
-      width: 85px;
-      height: 85px;
+  #directionControls {
+      --btn-size: 85px;
   }
 }
