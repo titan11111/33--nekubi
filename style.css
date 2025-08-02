@@ -150,16 +150,41 @@ body {
 }
 
 #directionControls {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 10px;
+  position: relative;
+  width: 156px;
+  height: 156px;
 }
 
-#upBtn { grid-column: 2; grid-row: 1; }
-#leftBtn { grid-column: 1; grid-row: 2; }
-#downBtn { grid-column: 2; grid-row: 3; }
-#rightBtn { grid-column: 3; grid-row: 2; }
+#upBtn,
+#downBtn,
+#leftBtn,
+#rightBtn {
+  position: absolute;
+}
+
+#upBtn {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#downBtn {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#leftBtn {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#rightBtn {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
 
 .control-btn {
   width: 78px;
@@ -188,6 +213,10 @@ body {
 
 .hide-btn:active {
   background: rgba(255,0,0,1);
+}
+
+#hideBtn {
+  border-radius: 50%;
 }
 
 /* クリア画面 */
@@ -278,6 +307,11 @@ body {
       width: 65px;
       height: 65px;
       font-size: 1.56rem;
+  }
+
+  #directionControls {
+      width: 130px;
+      height: 130px;
   }
 
   #mobileControls {
