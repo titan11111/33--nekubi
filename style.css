@@ -139,21 +139,35 @@ body {
 #mobileControls {
   position: absolute;
   bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
   display: flex;
-  gap: 15px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
   z-index: 1000;
 }
 
+#directionControls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+}
+
+#upBtn { grid-column: 2; grid-row: 1; }
+#leftBtn { grid-column: 1; grid-row: 2; }
+#downBtn { grid-column: 2; grid-row: 3; }
+#rightBtn { grid-column: 3; grid-row: 2; }
+
 .control-btn {
-  width: 60px;
-  height: 60px;
+  width: 78px;
+  height: 78px;
   border-radius: 50%;
   border: 3px solid #ffd700;
   background: rgba(0,0,0,0.8);
   color: #ffd700;
-  font-size: 1.5rem;
+  font-size: 1.95rem;
   font-weight: bold;
   cursor: pointer;
   user-select: none;
@@ -260,14 +274,14 @@ body {
   }
   
   .control-btn {
-      width: 50px;
-      height: 50px;
-      font-size: 1.2rem;
+      width: 65px;
+      height: 65px;
+      font-size: 1.56rem;
   }
-  
+
   #mobileControls {
-      gap: 10px;
       bottom: 15px;
+      padding: 0 15px;
   }
 }
 
@@ -297,7 +311,7 @@ body {
   }
   
   .control-btn {
-      width: 65px;
-      height: 65px;
+      width: 85px;
+      height: 85px;
   }
 }
