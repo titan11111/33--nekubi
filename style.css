@@ -147,14 +147,40 @@ body {
   padding: 0 20px;
   gap: 20px;
   z-index: 1000;
+  /* ボタンのサイズを変えるときはこの変数だけを調整 */
+  --btn-size: 78px;
 }
 
 #directionControls {
   position: relative;
-  /* ボタンのサイズを変えるときはこの変数だけを調整 */
-  --btn-size: 78px;
-  width: calc(var(--btn-size) * 2);
-  height: calc(var(--btn-size) * 2);
+  width: calc(var(--btn-size) * 3);
+  height: calc(var(--btn-size) * 3);
+}
+
+#directionControls::before,
+#directionControls::after {
+  content: '';
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  border: 3px solid #ffd700;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+#directionControls::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: var(--btn-size);
+  transform: translateY(-50%);
+}
+
+#directionControls::after {
+  left: 50%;
+  top: 0;
+  width: var(--btn-size);
+  height: 100%;
+  transform: translateX(-50%);
 }
 
 #upBtn,
@@ -188,37 +214,47 @@ body {
   transform: translateY(-50%);
 }
 
-.control-btn {
+#directionControls .control-btn {
   width: var(--btn-size);
   height: var(--btn-size);
-  border-radius: 50%;
-  border: 3px solid #ffd700;
-  background: rgba(0,0,0,0.8);
+  border: none;
+  background: none;
   color: #ffd700;
-  font-size: 1.95rem;
+  font-size: 2rem;
   font-weight: bold;
+  text-shadow: 0 0 8px #ffd700;
   cursor: pointer;
   user-select: none;
   touch-action: manipulation;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease;
+  border-radius: 0;
 }
 
-.control-btn:active {
-  background: rgba(255,215,0,0.3);
-  transform: scale(1.1);
+#directionControls .control-btn:active {
+  background: rgba(255, 215, 0, 0.2);
 }
 
 .hide-btn {
-  background: rgba(255,0,0,0.8);
+  width: calc(var(--btn-size) * 1.2);
+  height: calc(var(--btn-size) * 1.2);
+  border-radius: 50%;
+  border: 3px solid #ffd700;
+  background: radial-gradient(circle at 30% 30%, #ff4d4d, #b30000);
   color: #fff;
+  font-size: 2.2rem;
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.6);
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  transition: transform 0.2s ease, background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hide-btn:active {
-  background: rgba(255,0,0,1);
-}
-
-#hideBtn {
-  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ff6b6b, #ff0000);
+  transform: scale(1.1);
 }
 
 /* クリア画面 */
@@ -305,12 +341,12 @@ body {
       padding: 6px 10px;
   }
   
-  .control-btn {
+  #directionControls .control-btn {
       font-size: 1.56rem;
   }
 
-  #directionControls {
-      --btn-size: 65px;
+  .hide-btn {
+      font-size: 1.8rem;
   }
 
   #mobileControls {
@@ -318,6 +354,7 @@ body {
       padding: 0 15px;
       justify-content: center;
       gap: 15px;
+      --btn-size: 65px;
   }
 }
 
@@ -346,7 +383,7 @@ body {
       font-size: 1.2rem;
   }
   
-  #directionControls {
+  #mobileControls {
       --btn-size: 85px;
   }
 }
