@@ -142,9 +142,10 @@ body {
   left: 0;
   right: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 0 20px;
+  gap: 20px;
   z-index: 1000;
 }
 
@@ -282,6 +283,8 @@ body {
   #mobileControls {
       bottom: 15px;
       padding: 0 15px;
+      justify-content: center;
+      gap: 15px;
   }
 }
 
