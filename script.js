@@ -20,6 +20,13 @@ class NinjaGame {
             hiding: false,
             visible: true
         };
+
+        this.ninjaImages = [
+            new Image(),
+            new Image()
+        ];
+        this.ninjaImages[0].src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj4KICA8cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9Im5vbmUiLz4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjgiIHI9IjgiIGZpbGw9ImJsYWNrIi8+CiAgPHJlY3QgeD0iMTIiIHk9IjE2IiB3aWR0aD0iMTYiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CiAgPHJlY3QgeD0iNiIgeT0iMCIgd2lkdGg9IjQiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CiAgPHJlY3QgeD0iMzAiIHk9IjE2IiB3aWR0aD0iNCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4KICA8cmVjdCB4PSIxNCIgeT0iMzQiIHdpZHRoPSI0IiBoZWlnaHQ9IjYiIGZpbGw9ImJsYWNrIi8+CiAgPHJlY3QgeD0iMjIiIHk9IjI4IiB3aWR0aD0iNCIgaGVpZ2h0PSIxMiIgZmlsbD0iYmxhY2siLz4KICA8cmVjdCB4PSIxNSIgeT0iNiIgd2lkdGg9IjMiIGhlaWdodD0iMiIgZmlsbD0icmVkIi8+CiAgPHJlY3QgeD0iMjIiIHk9IjYiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIGZpbGw9InJlZCIvPgo8L3N2Zz4K';
+        this.ninjaImages[1].src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj4KICA8cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9Im5vbmUiLz4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjgiIHI9IjgiIGZpbGw9ImJsYWNrIi8+CiAgPHJlY3QgeD0iMTIiIHk9IjE2IiB3aWR0aD0iMTYiIGhlaWdodD0iMjAiIGZpbGw9ImJsYWNrIi8+CiAgPHJlY3QgeD0iNiIgeT0iMTYiIHdpZHRoPSI0IiBoZWlnaHQ9IjIwIiBmaWxsPSJibGFjayIvPgogIDxyZWN0IHg9IjMwIiB5PSIwIiB3aWR0aD0iNCIgaGVpZ2h0PSIyMCIgZmlsbD0iYmxhY2siLz4KICA8cmVjdCB4PSIxNCIgeT0iMjgiIHdpZHRoPSI0IiBoZWlnaHQ9IjEyIiBmaWxsPSJibGFjayIvPgogIDxyZWN0IHg9IjIyIiB5PSIzNCIgd2lkdGg9IjQiIGhlaWdodD0iNiIgZmlsbD0iYmxhY2siLz4KICA8cmVjdCB4PSIxNSIgeT0iNiIgd2lkdGg9IjMiIGhlaWdodD0iMiIgZmlsbD0icmVkIi8+CiAgPHJlY3QgeD0iMjIiIHk9IjYiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIGZpbGw9InJlZCIvPgo8L3N2Zz4K';
         
         // ゲーム状態
         this.score = 0;
@@ -37,6 +44,8 @@ class NinjaGame {
         this.keys = {
             left: false,
             right: false,
+            up: false,
+            down: false,
             hide: false
         };
         
@@ -83,6 +92,8 @@ class NinjaGame {
         const leftBtn = document.getElementById('leftBtn');
         const rightBtn = document.getElementById('rightBtn');
         const hideBtn = document.getElementById('hideBtn');
+        const upBtn = document.getElementById('upBtn');
+        const downBtn = document.getElementById('downBtn');
         
         // タッチイベント
         leftBtn.addEventListener('touchstart', (e) => {
@@ -102,6 +113,22 @@ class NinjaGame {
             e.preventDefault();
             this.keys.right = false;
         });
+        upBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.keys.up = true;
+        });
+        upBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.up = false;
+        });
+        downBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            this.keys.down = true;
+        });
+        downBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.down = false;
+        });
         
         hideBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -119,6 +146,10 @@ class NinjaGame {
         leftBtn.addEventListener('mouseup', () => this.keys.left = false);
         rightBtn.addEventListener('mousedown', () => this.keys.right = true);
         rightBtn.addEventListener('mouseup', () => this.keys.right = false);
+        upBtn.addEventListener('mousedown', () => this.keys.up = true);
+        upBtn.addEventListener('mouseup', () => this.keys.up = false);
+        downBtn.addEventListener('mousedown', () => this.keys.down = true);
+        downBtn.addEventListener('mouseup', () => this.keys.down = false);
         hideBtn.addEventListener('mousedown', () => {
             this.keys.hide = true;
             this.ninja.hiding = true;
@@ -139,8 +170,15 @@ class NinjaGame {
                 case 'KeyD':
                     this.keys.right = true;
                     break;
-                case 'Space':
+                case 'ArrowUp':
+                case 'KeyW':
+                    this.keys.up = true;
+                    break;
+                case 'ArrowDown':
                 case 'KeyS':
+                    this.keys.down = true;
+                    break;
+                case 'Space':
                     this.keys.hide = true;
                     this.ninja.hiding = true;
                     e.preventDefault();
@@ -158,8 +196,15 @@ class NinjaGame {
                 case 'KeyD':
                     this.keys.right = false;
                     break;
-                case 'Space':
+                case 'ArrowUp':
+                case 'KeyW':
+                    this.keys.up = false;
+                    break;
+                case 'ArrowDown':
                 case 'KeyS':
+                    this.keys.down = false;
+                    break;
+                case 'Space':
                     this.keys.hide = false;
                     this.ninja.hiding = false;
                     break;
@@ -210,10 +255,10 @@ class NinjaGame {
                 x: Math.random() * (this.canvasWidth - 60),
                 y: -200 - (i * 200),
                 width: 60,
-                height: 20,
+                height: 30,
                 direction: Math.random() > 0.5 ? 1 : -1,
-                speed: 1 + Math.random(),
-                range: 80 + Math.random() * 40,
+                speed: 1.5 + Math.random(),
+                range: 120 + Math.random() * 40,
                 alertLevel: 0
             });
         }
@@ -262,7 +307,13 @@ class NinjaGame {
         if (this.keys.right && this.ninja.x < this.canvasWidth - this.ninja.width) {
             this.ninja.x += this.ninja.speed;
         }
-        
+        if (this.keys.up && this.ninja.y > 0) {
+            this.ninja.y -= this.ninja.speed;
+        }
+        if (this.keys.down && this.ninja.y < this.canvasHeight - this.ninja.height) {
+            this.ninja.y += this.ninja.speed;
+        }
+
         // 自動上昇（忍び足で登る）
         if (!this.ninja.hiding) {
             this.scrollY += 1;
@@ -419,19 +470,26 @@ class NinjaGame {
         this.guards.forEach(guard => {
             const y = guard.y + this.scrollY;
             if (y > -50 && y < this.canvasHeight + 50) {
-                // 見張りの目
-                this.ctx.fillStyle = guard.alertLevel > 500 ? '#ff0000' : '#ffff00';
+                // 本体
+                this.ctx.fillStyle = guard.alertLevel > 500 ? '#ff0000' : '#8b0000';
                 this.ctx.fillRect(guard.x, y, guard.width, guard.height);
-                
-                // 目
+
+                // 兜
                 this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(guard.x, y - 10, guard.width, 10);
+
+                // 目
+                this.ctx.fillStyle = guard.alertLevel > 500 ? '#ffff00' : '#ffff99';
                 this.ctx.fillRect(guard.x + 10, y + 5, 8, 8);
-                this.ctx.fillRect(guard.x + 42, y + 5, 8, 8);
-                
-                // 警戒範囲（デバッグ用）
+                this.ctx.fillRect(guard.x + guard.width - 18, y + 5, 8, 8);
+
+                // 槍
+                this.ctx.fillStyle = '#c0c0c0';
+                this.ctx.fillRect(guard.x + guard.width + 5, y - 20, 4, guard.height + 20);
+
                 if (guard.alertLevel > 0) {
                     this.ctx.strokeStyle = 'rgba(255,0,0,0.3)';
-                    this.ctx.strokeRect(guard.x - guard.range/2, y - 25, guard.range, 50);
+                    this.ctx.strokeRect(guard.x - guard.range/2, y - 25, guard.range, guard.height + 50);
                 }
             }
         });
@@ -468,23 +526,14 @@ class NinjaGame {
     
     drawNinja() {
         if (!this.ninja.visible) return;
-        
+
         // 隠れている時は半透明
         this.ctx.globalAlpha = this.ninja.hiding ? 0.3 : 1.0;
-        
-        // 忍者の体
-        this.ctx.fillStyle = '#000';
-        this.ctx.fillRect(this.ninja.x, this.ninja.y, this.ninja.width, this.ninja.height);
-        
-        // 忍者の目
-        this.ctx.fillStyle = '#ff0000';
-        this.ctx.fillRect(this.ninja.x + 8, this.ninja.y + 8, 6, 4);
-        this.ctx.fillRect(this.ninja.x + 26, this.ninja.y + 8, 6, 4);
-        
-        // 刀
-        this.ctx.fillStyle = '#c0c0c0';
-        this.ctx.fillRect(this.ninja.x + this.ninja.width - 5, this.ninja.y + 5, 3, 20);
-        
+
+        const frame = Math.floor(Date.now() / 200) % 2;
+        const img = this.ninjaImages[frame];
+        this.ctx.drawImage(img, this.ninja.x, this.ninja.y, this.ninja.width, this.ninja.height);
+
         this.ctx.globalAlpha = 1.0;
     }
     
