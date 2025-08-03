@@ -147,6 +147,8 @@ body {
   padding: 0 20px;
   gap: 20px;
   z-index: 1000;
+  transform: scale(0.7);
+  transform-origin: bottom center;
   /* ボタンのサイズを変えるときはこの変数だけを調整 */
   --btn-size: 78px;
 }
@@ -165,6 +167,7 @@ body {
   border: 3px solid #ffd700;
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
 }
 
 #directionControls::before {
