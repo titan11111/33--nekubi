@@ -40,6 +40,10 @@ class NinjaGame {
         this.cats = [];
         this.obstacles = [];
         this.dogs = [];
+        this.onis = [];
+
+        this.oniImage = new Image();
+        this.oniImage.src = 'oni.svg';
         
         // コントロール
         this.keys = {
@@ -270,6 +274,7 @@ class NinjaGame {
         this.cats = [];
         this.obstacles = [];
         this.dogs = [];
+        this.onis = [];
         
         // 見張りの目を配置
         for (let i = 0; i < 10; i++) {
@@ -306,6 +311,18 @@ class NinjaGame {
                 height: 25,
                 direction: Math.random() > 0.5 ? 1 : -1,
                 speed: 1 + Math.random()
+            });
+        }
+
+        // 鬼を配置
+        for (let i = 0; i < 3; i++) {
+            this.onis.push({
+                x: Math.random() * (this.canvasWidth - 60),
+                y: -220 - (i * 400),
+                width: 60,
+                height: 90,
+                direction: Math.random() > 0.5 ? 1 : -1,
+                speed: 0.5 + Math.random()
             });
         }
         
@@ -361,6 +378,7 @@ class NinjaGame {
         this.updateGuards(deltaTime);
         this.updateCats(deltaTime);
         this.updateDogs(deltaTime);
+        this.updateOnis(deltaTime);
         
         // 衝突判定
         this.checkCollisions();
@@ -450,6 +468,27 @@ class NinjaGame {
             }
         });
     }
+
+    updateOnis(deltaTime) {
+        this.onis.forEach(oni => {
+            oni.x += oni.direction * oni.speed;
+
+            if (oni.x <= 0 || oni.x >= this.canvasWidth - oni.width) {
+                oni.direction *= -1;
+            }
+
+            const oniScreenY = oni.y + this.scrollY;
+            if (
+                this.ninja.x < oni.x + oni.width &&
+                this.ninja.x + this.ninja.width > oni.x &&
+                this.ninja.y < oniScreenY + oni.height &&
+                this.ninja.y + this.ninja.height > oniScreenY &&
+                !this.ninja.hiding
+            ) {
+                this.gameOver();
+            }
+        });
+    }
     
     checkCollisions() {
         // 障害物との衝突（足場として使用）
@@ -484,6 +523,7 @@ class NinjaGame {
         this.drawGuards();
         this.drawCats();
         this.drawDogs();
+        this.drawOnis();
         
         // 忍者
         this.drawNinja();
@@ -599,6 +639,15 @@ class NinjaGame {
                 this.ctx.fillStyle = '#000';
                 this.ctx.fillRect(dog.x + dog.width - 12, y - 8, 2, 2);
                 this.ctx.fillRect(dog.x + dog.width - 6, y - 8, 2, 2);
+            }
+        });
+    }
+
+    drawOnis() {
+        this.onis.forEach(oni => {
+            const y = oni.y + this.scrollY;
+            if (y > -100 && y < this.canvasHeight + 100) {
+                this.ctx.drawImage(this.oniImage, oni.x, y, oni.width, oni.height);
             }
         });
     }
