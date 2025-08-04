@@ -58,12 +58,22 @@ class NinjaGame {
         this.bgm = new Audio('audio/nekugi.mp3');
         this.bgm.loop = true;
 
+        // 背景画像
+        this.backgroundImage = new Image();
+        this.bgPattern = null;
+
         this.init();
     }
-    
+
     init() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
+
+        // 背景画像の読み込み
+        this.backgroundImage.onload = () => {
+            this.bgPattern = this.ctx.createPattern(this.backgroundImage, 'repeat');
+        };
+        this.backgroundImage.src = 'stone-wall.svg';
         
         // キャンバスサイズ設定
         this.resizeCanvas();
@@ -485,18 +495,16 @@ class NinjaGame {
     }
     
     drawBackground() {
-        // 石垣のパターン
-        this.ctx.fillStyle = '#2c3e50';
-        this.ctx.strokeStyle = '#34495e';
-        this.ctx.lineWidth = 2;
-        
-        for (let y = -100; y < this.canvasHeight + 100; y += 50) {
-            for (let x = 0; x < this.canvasWidth; x += 80) {
-                const drawY = y + (this.scrollY % 50);
-                this.ctx.fillRect(x, drawY, 78, 48);
-                this.ctx.strokeRect(x, drawY, 78, 48);
-            }
-        }
+        if (!this.bgPattern) return;
+
+        const tileHeight = this.backgroundImage.height || this.backgroundImage.naturalHeight;
+        const offsetY = this.scrollY % tileHeight;
+
+        this.ctx.save();
+        this.ctx.translate(0, offsetY);
+        this.ctx.fillStyle = this.bgPattern;
+        this.ctx.fillRect(0, -tileHeight, this.canvasWidth, this.canvasHeight + tileHeight);
+        this.ctx.restore();
     }
     
     drawObstacles() {
