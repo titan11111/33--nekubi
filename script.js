@@ -53,7 +53,11 @@ class NinjaGame {
         // アニメーション
         this.animationId = 0;
         this.lastTime = 0;
-        
+
+        // BGM設定
+        this.bgm = new Audio('audio/nekugi.mp3');
+        this.bgm.loop = true;
+
         this.init();
     }
     
@@ -240,7 +244,13 @@ class NinjaGame {
         
         // 敵・障害物生成
         this.generateLevel();
-        
+
+        // BGM再生
+        if (this.bgm) {
+            this.bgm.currentTime = 0;
+            this.bgm.play();
+        }
+
         // ゲームループ開始
         this.gameLoop();
     }
@@ -659,6 +669,10 @@ class NinjaGame {
     }
     
     gameClear() {
+        // BGM停止
+        if (this.bgm) {
+            this.bgm.pause();
+        }
         this.gameState = 'clear';
         cancelAnimationFrame(this.animationId);
         
@@ -686,6 +700,10 @@ class NinjaGame {
     }
     
     gameOver() {
+        // BGM停止
+        if (this.bgm) {
+            this.bgm.pause();
+        }
         this.gameState = 'gameover';
         cancelAnimationFrame(this.animationId);
         
