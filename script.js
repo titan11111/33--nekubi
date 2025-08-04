@@ -39,6 +39,7 @@ class NinjaGame {
         this.guards = [];
         this.cats = [];
         this.obstacles = [];
+        this.dogs = [];
         
         // コントロール
         this.keys = {
@@ -248,6 +249,7 @@ class NinjaGame {
         this.guards = [];
         this.cats = [];
         this.obstacles = [];
+        this.dogs = [];
         
         // 見張りの目を配置
         for (let i = 0; i < 10; i++) {
@@ -272,6 +274,18 @@ class NinjaGame {
                 height: 20,
                 sleepTime: Math.random() * 3000 + 2000,
                 awakeBehavior: Math.random() > 0.5
+            });
+        }
+
+        // 犬を配置
+        for (let i = 0; i < 4; i++) {
+            this.dogs.push({
+                x: Math.random() * (this.canvasWidth - 40),
+                y: -180 - (i * 300),
+                width: 40,
+                height: 25,
+                direction: Math.random() > 0.5 ? 1 : -1,
+                speed: 1 + Math.random()
             });
         }
         
@@ -326,6 +340,7 @@ class NinjaGame {
         // 敵の更新
         this.updateGuards(deltaTime);
         this.updateCats(deltaTime);
+        this.updateDogs(deltaTime);
         
         // 衝突判定
         this.checkCollisions();
@@ -394,6 +409,27 @@ class NinjaGame {
             }
         });
     }
+
+    updateDogs(deltaTime) {
+        this.dogs.forEach(dog => {
+            dog.x += dog.direction * dog.speed;
+
+            if (dog.x <= 0 || dog.x >= this.canvasWidth - dog.width) {
+                dog.direction *= -1;
+            }
+
+            const dogScreenY = dog.y + this.scrollY;
+            if (
+                this.ninja.x < dog.x + dog.width &&
+                this.ninja.x + this.ninja.width > dog.x &&
+                this.ninja.y < dogScreenY + dog.height &&
+                this.ninja.y + this.ninja.height > dogScreenY &&
+                !this.ninja.hiding
+            ) {
+                this.gameOver();
+            }
+        });
+    }
     
     checkCollisions() {
         // 障害物との衝突（足場として使用）
@@ -427,6 +463,7 @@ class NinjaGame {
         // 敵
         this.drawGuards();
         this.drawCats();
+        this.drawDogs();
         
         // 忍者
         this.drawNinja();
@@ -520,6 +557,30 @@ class NinjaGame {
                 // 尻尾
                 this.ctx.fillStyle = '#444';
                 this.ctx.fillRect(cat.x + cat.width, y + 5, 8, 3);
+            }
+        });
+    }
+
+    drawDogs() {
+        this.dogs.forEach(dog => {
+            const y = dog.y + this.scrollY;
+            if (y > -50 && y < this.canvasHeight + 50) {
+                // 体
+                this.ctx.fillStyle = '#a0522d';
+                this.ctx.fillRect(dog.x, y, dog.width, dog.height);
+
+                // 頭
+                this.ctx.fillRect(dog.x + dog.width - 15, y - 10, 15, 10);
+
+                // 耳
+                this.ctx.fillStyle = '#8b4513';
+                this.ctx.fillRect(dog.x + dog.width - 15, y - 14, 5, 4);
+                this.ctx.fillRect(dog.x + dog.width - 5, y - 14, 5, 4);
+
+                // 目
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(dog.x + dog.width - 12, y - 8, 2, 2);
+                this.ctx.fillRect(dog.x + dog.width - 6, y - 8, 2, 2);
             }
         });
     }
