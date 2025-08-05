@@ -40,6 +40,13 @@ class NinjaGame {
         this.cats = [];
         this.obstacles = [];
         this.dogs = [];
+        this.samurai = [];
+
+        // 画像の読み込み
+        this.lordImage = new Image();
+        this.lordImage.src = 'images/sleeping-lord.png';
+        this.samuraiImage = new Image();
+        this.samuraiImage.src = 'images/fallen-samurai.png';
         
         // コントロール
         this.keys = {
@@ -300,6 +307,7 @@ class NinjaGame {
         this.cats = [];
         this.obstacles = [];
         this.dogs = [];
+        this.samurai = [];
         
         // 見張りの目を配置
         for (let i = 0; i < 10; i++) {
@@ -334,6 +342,18 @@ class NinjaGame {
                 y: -180 - (i * 300),
                 width: 40,
                 height: 25,
+                direction: Math.random() > 0.5 ? 1 : -1,
+                speed: 1 + Math.random()
+            });
+        }
+
+        // 落武者を配置
+        for (let i = 0; i < 3; i++) {
+            this.samurai.push({
+                x: Math.random() * (this.canvasWidth - 40),
+                y: -220 - (i * 400),
+                width: 40,
+                height: 60,
                 direction: Math.random() > 0.5 ? 1 : -1,
                 speed: 1 + Math.random()
             });
@@ -391,6 +411,7 @@ class NinjaGame {
         this.updateGuards(deltaTime);
         this.updateCats(deltaTime);
         this.updateDogs(deltaTime);
+        this.updateSamurai(deltaTime);
         
         // 衝突判定
         this.checkCollisions();
@@ -480,6 +501,27 @@ class NinjaGame {
             }
         });
     }
+
+    updateSamurai(deltaTime) {
+        this.samurai.forEach(samurai => {
+            samurai.x += samurai.direction * samurai.speed;
+
+            if (samurai.x <= 0 || samurai.x >= this.canvasWidth - samurai.width) {
+                samurai.direction *= -1;
+            }
+
+            const samuraiScreenY = samurai.y + this.scrollY;
+            if (
+                this.ninja.x < samurai.x + samurai.width &&
+                this.ninja.x + this.ninja.width > samurai.x &&
+                this.ninja.y < samuraiScreenY + samurai.height &&
+                this.ninja.y + this.ninja.height > samuraiScreenY &&
+                !this.ninja.hiding
+            ) {
+                this.gameOver();
+            }
+        });
+    }
     
     checkCollisions() {
         // 障害物との衝突（足場として使用）
@@ -514,6 +556,7 @@ class NinjaGame {
         this.drawGuards();
         this.drawCats();
         this.drawDogs();
+        this.drawSamurai();
         
         // 忍者
         this.drawNinja();
@@ -632,6 +675,21 @@ class NinjaGame {
             }
         });
     }
+
+    drawSamurai() {
+        this.samurai.forEach(samurai => {
+            const y = samurai.y + this.scrollY;
+            if (y > -50 && y < this.canvasHeight + 50) {
+                this.ctx.drawImage(
+                    this.samuraiImage,
+                    samurai.x,
+                    y,
+                    samurai.width,
+                    samurai.height
+                );
+            }
+        });
+    }
     
     drawNinja() {
         if (!this.ninja.visible) return;
@@ -662,30 +720,21 @@ class NinjaGame {
         }
         
         // 殿様（寝ている）
-        const lordX = this.canvasWidth / 2 - 40;
-        const lordY = roomY + 100;
-        
-        // 布団
-        this.ctx.fillStyle = '#ff69b4';
-        this.ctx.fillRect(lordX - 10, lordY, 100, 60);
-        
-        // 殿様の体
-        this.ctx.fillStyle = '#ffdbac';
-        this.ctx.fillRect(lordX, lordY + 10, 80, 40);
-        
-        // 殿様の頭
-        this.ctx.beginPath();
-        this.ctx.arc(lordX + 40, lordY + 20, 15, 0, Math.PI * 2);
-        this.ctx.fill();
-        
+        const lordWidth = 150;
+        const lordHeight = 100;
+        const lordX = this.canvasWidth / 2 - lordWidth / 2;
+        const lordY = roomY + 60;
+
+        this.ctx.drawImage(this.lordImage, lordX, lordY, lordWidth, lordHeight);
+
         // 寝ている表現（zzz）
         this.ctx.fillStyle = '#fff';
         this.ctx.font = '20px Arial';
-        this.ctx.fillText('💤', lordX + 60, lordY - 10);
-        
+        this.ctx.fillText('💤', lordX + lordWidth - 30, lordY - 10);
+
         // ゴール判定
-        if (this.ninja.x > lordX - 20 && this.ninja.x < lordX + 100 &&
-            this.ninja.y > lordY - 20 && this.ninja.y < lordY + 80) {
+        if (this.ninja.x > lordX && this.ninja.x < lordX + lordWidth &&
+            this.ninja.y > lordY && this.ninja.y < lordY + lordHeight) {
             this.gameClear();
         }
     }
