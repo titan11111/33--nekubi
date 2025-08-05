@@ -297,8 +297,10 @@ body {
 }
 
 .lord-defeated {
-  font-size: clamp(3rem, 8vw, 5rem);
-  margin: 20px 0;
+  width: clamp(150px, 40vw, 250px);
+  height: auto;
+  margin: 20px auto;
+  display: block;
   animation: spin 2s linear infinite;
 }
 
@@ -337,8 +339,10 @@ body {
 }
 
 .caught {
-  font-size: clamp(2rem, 6vw, 4rem);
-  margin: 20px 0;
+  width: clamp(150px, 40vw, 250px);
+  height: auto;
+  margin: 20px auto;
+  display: block;
   animation: flash 0.5s ease-in-out infinite alternate;
 }
 
@@ -386,9 +390,14 @@ body {
       margin: 10px 0;
   }
   
-  .ninja-title, .lord-defeated, .caught {
+  .ninja-title {
       font-size: 3rem;
       margin: 10px 0;
+  }
+
+  .lord-defeated, .caught {
+      width: 80px;
+      margin: 10px auto;
   }
 }
 
