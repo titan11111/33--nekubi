@@ -119,12 +119,20 @@ class NinjaGame {
             e.preventDefault();
             this.keys.left = false;
         });
+        leftBtn.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            this.keys.left = false;
+        });
         
         rightBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             this.keys.right = true;
         });
         rightBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.right = false;
+        });
+        rightBtn.addEventListener('touchcancel', (e) => {
             e.preventDefault();
             this.keys.right = false;
         });
@@ -136,11 +144,19 @@ class NinjaGame {
             e.preventDefault();
             this.keys.up = false;
         });
+        upBtn.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            this.keys.up = false;
+        });
         downBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             this.keys.down = true;
         });
         downBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.down = false;
+        });
+        downBtn.addEventListener('touchcancel', (e) => {
             e.preventDefault();
             this.keys.down = false;
         });
@@ -151,6 +167,11 @@ class NinjaGame {
             this.ninja.hiding = true;
         });
         hideBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            this.keys.hide = false;
+            this.ninja.hiding = false;
+        });
+        hideBtn.addEventListener('touchcancel', (e) => {
             e.preventDefault();
             this.keys.hide = false;
             this.ninja.hiding = false;
@@ -179,47 +200,56 @@ class NinjaGame {
             switch(e.code) {
                 case 'ArrowLeft':
                 case 'KeyA':
+                    e.preventDefault();
                     this.keys.left = true;
                     break;
                 case 'ArrowRight':
                 case 'KeyD':
+                    e.preventDefault();
                     this.keys.right = true;
                     break;
                 case 'ArrowUp':
                 case 'KeyW':
+                    e.preventDefault();
                     this.keys.up = true;
                     break;
                 case 'ArrowDown':
                 case 'KeyS':
+                    e.preventDefault();
                     this.keys.down = true;
                     break;
                 case 'Space':
+                    e.preventDefault();
                     this.keys.hide = true;
                     this.ninja.hiding = true;
-                    e.preventDefault();
                     break;
             }
         });
-        
+
         document.addEventListener('keyup', (e) => {
             switch(e.code) {
                 case 'ArrowLeft':
                 case 'KeyA':
+                    e.preventDefault();
                     this.keys.left = false;
                     break;
                 case 'ArrowRight':
                 case 'KeyD':
+                    e.preventDefault();
                     this.keys.right = false;
                     break;
                 case 'ArrowUp':
                 case 'KeyW':
+                    e.preventDefault();
                     this.keys.up = false;
                     break;
                 case 'ArrowDown':
                 case 'KeyS':
+                    e.preventDefault();
                     this.keys.down = false;
                     break;
                 case 'Space':
+                    e.preventDefault();
                     this.keys.hide = false;
                     this.ninja.hiding = false;
                     break;
