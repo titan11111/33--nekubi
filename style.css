@@ -163,11 +163,12 @@ body {
 #directionControls::after {
   content: '';
   position: absolute;
-  background: rgba(0, 0, 0, 0.8);
+  background: linear-gradient(to right, #ff6b6b, #4ecdc4);
   border: 3px solid #ffd700;
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
   pointer-events: none;
+  z-index: 0;
 }
 
 #directionControls::before {
@@ -184,6 +185,7 @@ body {
   width: var(--btn-size);
   height: 100%;
   transform: translateX(-50%);
+  background: linear-gradient(to bottom, #ff6b6b, #4ecdc4);
 }
 
 #upBtn,
@@ -225,16 +227,27 @@ body {
   color: #ffd700;
   font-size: 2rem;
   font-weight: bold;
-  text-shadow: 0 0 8px #ffd700;
+  text-shadow: 0 0 8px currentColor;
   cursor: pointer;
   user-select: none;
   touch-action: manipulation;
   transition: background 0.2s ease;
   border-radius: 0;
+  z-index: 1;
 }
 
 #directionControls .control-btn:active {
   background: rgba(255, 215, 0, 0.2);
+}
+
+#leftBtn,
+#upBtn {
+  color: #ff6b6b;
+}
+
+#rightBtn,
+#downBtn {
+  color: #4ecdc4;
 }
 
 .hide-btn {
