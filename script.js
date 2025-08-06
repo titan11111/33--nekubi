@@ -42,11 +42,15 @@ class NinjaGame {
         this.dogs = [];
         this.samurai = [];
 
-        // 画像の読み込み
+        // DOMエンティティ
+        this.domEnemies = [];
+        this.domObjects = [];
+
+        // 画像の読み込み（インラインSVG）
         this.lordImage = new Image();
-        this.lordImage.src = 'images/sleeping-lord.png';
+        this.lordImage.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTUwIDEwMCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiM0NDQiLz48Y2lyY2xlIGN4PSI3NSIgY3k9IjUwIiByPSIzMCIgZmlsbD0iIzIyMiIvPjwvc3ZnPg==';
         this.samuraiImage = new Image();
-        this.samuraiImage.src = 'images/fallen-samurai.png';
+        this.samuraiImage.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDQwIDYwIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNjAiIGZpbGw9IiMzMzMiLz48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSI2IiBmaWxsPSJyZWQiLz48L3N2Zz4=';
         
         // コントロール
         this.keys = {
@@ -278,7 +282,7 @@ class NinjaGame {
         document.getElementById('gameScreen').style.display = 'block';
         document.getElementById('clearScreen').style.display = 'none';
         document.getElementById('gameoverScreen').style.display = 'none';
-        
+
         // ゲーム状態リセット
         this.score = 0;
         this.stage = 1;
@@ -288,9 +292,37 @@ class NinjaGame {
         this.ninja.y = this.canvasHeight - 100;
         this.ninja.hiding = false;
         this.ninja.visible = true;
-        
+
+        // DOMエンティティ初期化
+        this.clearDomEntities();
+
         // 敵・障害物生成
         this.generateLevel();
+
+        const enemyTypes = [
+            'enemy-shadow-guard',
+            'enemy-bow-ninja',
+            'enemy-fire-ninja',
+            'enemy-club-brute',
+            'enemy-ninja-dog',
+            'enemy-puppet',
+            'enemy-scout',
+            'enemy-chain-ninja',
+            'enemy-fox-assassin',
+            'enemy-phantom'
+        ];
+        enemyTypes.forEach(type => {
+            const x = Math.random() * (this.canvasWidth - 48);
+            const y = Math.random() * (this.canvasHeight - 48);
+            this.spawnEnemy(type, x, y);
+        });
+
+        const objectTypes = ['bamboo-cluster', 'shoji-screen', 'trap-spike', 'roof-tile'];
+        objectTypes.forEach(type => {
+            const x = Math.random() * (this.canvasWidth - 48);
+            const y = Math.random() * (this.canvasHeight - 48);
+            this.placeObject(type, x, y);
+        });
 
         // BGM再生
         if (this.bgm) {
@@ -369,6 +401,38 @@ class NinjaGame {
                 type: 'platform'
             });
         }
+    }
+
+    spawnEnemy(type, x, y) {
+        const template = document.querySelector(`#enemyTemplates .${type}`);
+        if (!template) return;
+        const enemy = template.cloneNode(true);
+        enemy.classList.add('enemy');
+        enemy.style.left = `${x}px`;
+        enemy.style.top = `${y}px`;
+        enemy.style.pointerEvents = 'auto';
+        enemy.addEventListener('mouseenter', () => enemy.style.opacity = '0.5');
+        enemy.addEventListener('mouseleave', () => enemy.style.opacity = '1');
+        document.getElementById('enemyContainer').appendChild(enemy);
+        this.domEnemies.push(enemy);
+    }
+
+    placeObject(type, x, y) {
+        const template = document.querySelector(`#objectTemplates .${type}`);
+        if (!template) return;
+        const obj = template.cloneNode(true);
+        obj.classList.add('map-object');
+        obj.style.left = `${x}px`;
+        obj.style.top = `${y}px`;
+        document.getElementById('objectContainer').appendChild(obj);
+        this.domObjects.push(obj);
+    }
+
+    clearDomEntities() {
+        this.domEnemies.forEach(e => e.remove());
+        this.domObjects.forEach(o => o.remove());
+        this.domEnemies = [];
+        this.domObjects = [];
     }
     
     gameLoop(currentTime = 0) {
