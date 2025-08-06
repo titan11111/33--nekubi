@@ -740,9 +740,9 @@ class NinjaGame {
     }
     
     updateUI() {
-        document.getElementById('score').textContent = `忍度: ${this.score}点`;
-        document.getElementById('stage').textContent = `階: ${this.stage}F`;
-        document.getElementById('stealth').textContent = `隠密度: ${Math.round(this.stealthLevel)}%`;
+        document.getElementById('score').textContent = `${this.score}`;
+        document.getElementById('stage').textContent = `${this.stage}F`;
+        document.getElementById('stealth').textContent = `${Math.round(this.stealthLevel)}%`;
         
         // ステルス度による色変更
         const stealthElement = document.getElementById('stealth');

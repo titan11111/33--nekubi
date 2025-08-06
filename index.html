@@ -28,9 +28,9 @@
         <!-- ゲーム画面 -->
         <div id="gameScreen" style="display: none;">
             <div id="gameInfo">
-                <div id="score">忍度: 0点</div>
-                <div id="stage">階: 1F</div>
-                <div id="stealth">隠密度: 100%</div>
+                <div class="info-item"><span class="icon">🥷</span><span id="score">0</span></div>
+                <div class="info-item"><span class="icon">🪜</span><span id="stage">1F</span></div>
+                <div class="info-item"><span class="icon">👁️</span><span id="stealth">100%</span></div>
             </div>
             
             <canvas id="gameCanvas"></canvas>
@@ -43,7 +43,7 @@
                     <button id="downBtn" class="control-btn">↓</button>
                     <button id="rightBtn" class="control-btn">→</button>
                 </div>
-                <button id="hideBtn" class="control-btn hide-btn">隠</button>
+                <button id="hideBtn" class="control-btn hide-btn" title="しゃがむ / 隠れる"><span class="hide-icon">🧎</span>隠</button>
             </div>
         </div>
 
