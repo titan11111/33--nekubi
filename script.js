@@ -45,6 +45,8 @@ const floors = [
     { y: 100, enemies: ['lord'] } // ボスフロア
 ];
 
+const FLOOR_HEIGHT = 10;
+
 // 入力管理
 const keys = {};
 const touches = {};
@@ -177,7 +179,7 @@ function restartGame() {
 // プレイヤーリセット
 function resetPlayer() {
     player.x = canvasWidth / 2 - player.width / 2;
-    player.y = canvasHeight - 100;
+    player.y = floors[0].y - player.height;
     player.velocityX = 0;
     player.velocityY = 0;
     player.onGround = true;
@@ -187,23 +189,24 @@ function resetPlayer() {
 // 敵生成
 function generateEnemies() {
     enemies = [];
-    const currentFloorData = floors[gameState.currentFloor - 1];
-    
-    currentFloorData.enemies.forEach((enemyType, index) => {
-        const enemy = {
-            type: enemyType,
-            x: 50 + (index * 100),
-            y: currentFloorData.y,
-            width: enemyType === 'lord' ? 80 : 45,
-            height: enemyType === 'lord' ? 60 : 45,
-            health: enemyType === 'lord' ? 5 : 1,
-            direction: Math.random() > 0.5 ? 1 : -1,
-            speed: enemyType === 'samurai' ? 1 : 0.5,
-            shootTimer: 0,
-            patrolLeft: 50 + (index * 100) - 50,
-            patrolRight: 50 + (index * 100) + 50
-        };
-        enemies.push(enemy);
+    floors.forEach(floor => {
+        floor.enemies.forEach((enemyType, index) => {
+            const enemyHeight = enemyType === 'lord' ? 60 : 45;
+            const enemy = {
+                type: enemyType,
+                x: 50 + (index * 100),
+                y: floor.y - enemyHeight,
+                width: enemyType === 'lord' ? 80 : 45,
+                height: enemyHeight,
+                health: enemyType === 'lord' ? 5 : 1,
+                direction: Math.random() > 0.5 ? 1 : -1,
+                speed: enemyType === 'samurai' ? 1 : 0.5,
+                shootTimer: 0,
+                patrolLeft: 50 + (index * 100) - 50,
+                patrolRight: 50 + (index * 100) + 50
+            };
+            enemies.push(enemy);
+        });
     });
 }
 
@@ -284,18 +287,50 @@ function updatePlayer() {
     // 位置更新
     player.x += player.velocityX;
     player.y += player.velocityY;
-    
+
     // 画面端制限
     if (player.x < 0) player.x = 0;
     if (player.x + player.width > canvasWidth) player.x = canvasWidth - player.width;
-    
-    // 地面判定
-    if (player.y + player.height >= canvasHeight - 20) {
-        player.y = canvasHeight - 20 - player.height;
+
+    // フロアとの衝突判定
+    player.onGround = false;
+    floors.forEach(floor => {
+        if (player.y + player.height >= floor.y &&
+            player.y + player.height <= floor.y + FLOOR_HEIGHT &&
+            player.velocityY >= 0) {
+            player.y = floor.y - player.height;
+            player.velocityY = 0;
+            player.onGround = true;
+            player.isJumping = false;
+        }
+    });
+
+    // 最下層より下に落ちないように制限
+    if (player.y + player.height > floors[0].y + FLOOR_HEIGHT) {
+        player.y = floors[0].y - player.height;
         player.velocityY = 0;
         player.onGround = true;
         player.isJumping = false;
     }
+
+    updateScroll();
+    updateCurrentFloor();
+}
+
+function updateScroll() {
+    const maxScroll = floors[0].y - floors[floors.length - 1].y;
+    gameState.scrollY = Math.min(Math.max(player.y - canvasHeight / 2, 0), maxScroll);
+}
+
+function updateCurrentFloor() {
+    let floorNum = 1;
+    for (let i = floors.length - 1; i >= 0; i--) {
+        if (player.y <= floors[i].y - 1) {
+            floorNum = i + 1;
+        }
+    }
+    gameState.currentFloor = floorNum;
+    document.getElementById('current-floor').textContent = gameState.currentFloor;
 }
 
 // 敵更新
@@ -401,15 +436,9 @@ function takeDamage() {
 
 // ゲーム進行更新
 function updateGameProgress() {
-    // 全ての敵を倒したら次のフロアへ
-    if (enemies.length === 0) {
-        if (gameState.currentFloor >= 5) {
-            gameClear();
-        } else {
-            gameState.currentFloor++;
-            generateEnemies();
-            updateUI();
-        }
+    // プレイヤーが最上階に到達したらクリア
+    if (player.y <= floors[floors.length - 1].y - player.height) {
+        gameClear();
     }
 }
 
@@ -471,16 +500,14 @@ function drawCastleBackground() {
     // 城の壁パターン
     ctx.strokeStyle = '#444';
     ctx.lineWidth = 2;
-    
-    // 横線（床）
-    for (let i = 1; i <= 5; i++) {
-        const y = canvasHeight - (i * 100);
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvasWidth, y);
-        ctx.stroke();
-    }
-    
+
+    // フロア
+    ctx.fillStyle = '#555';
+    floors.forEach(floor => {
+        const y = floor.y - gameState.scrollY;
+        ctx.fillRect(0, y, canvasWidth, FLOOR_HEIGHT);
+    });
+
     // 縦線（柱）
     for (let x = 50; x < canvasWidth; x += 100) {
         ctx.beginPath();
@@ -523,9 +550,9 @@ function drawPlayer() {
     // 向きに応じて反転
     if (player.direction === -1) {
         ctx.scale(-1, 1);
-        ctx.translate(-player.x - player.width, player.y);
+        ctx.translate(-player.x - player.width, player.y - gameState.scrollY);
     } else {
-        ctx.translate(player.x, player.y);
+        ctx.translate(player.x, player.y - gameState.scrollY);
     }
     
     // 忍者の体
@@ -548,7 +575,7 @@ function drawPlayer() {
 // 敵描画
 function drawEnemy(enemy) {
     ctx.save();
-    ctx.translate(enemy.x, enemy.y);
+    ctx.translate(enemy.x, enemy.y - gameState.scrollY);
     
     if (enemy.type === 'samurai') {
         // 侍
@@ -644,7 +671,7 @@ function drawEnemy(enemy) {
 // 手裏剣描画
 function drawShuriken(shuriken) {
     ctx.save();
-    ctx.translate(shuriken.x + shuriken.width/2, shuriken.y + shuriken.height/2);
+    ctx.translate(shuriken.x + shuriken.width/2, shuriken.y + shuriken.height/2 - gameState.scrollY);
     ctx.rotate(Date.now() * 0.01); // 回転アニメーション
     
     // 手裏剣の形
@@ -672,13 +699,13 @@ function drawShuriken(shuriken) {
 // 矢描画
 function drawArrow(arrow) {
     ctx.fillStyle = '#8b4513';
-    ctx.fillRect(arrow.x, arrow.y, 25, 2);
-    
+    ctx.fillRect(arrow.x, arrow.y - gameState.scrollY, 25, 2);
+
     ctx.fillStyle = '#666666';
     ctx.beginPath();
-    ctx.moveTo(arrow.x + 25, arrow.y - 2);
-    ctx.lineTo(arrow.x + 30, arrow.y + 1);
-    ctx.lineTo(arrow.x + 25, arrow.y + 4);
+    ctx.moveTo(arrow.x + 25, arrow.y - 2 - gameState.scrollY);
+    ctx.lineTo(arrow.x + 30, arrow.y + 1 - gameState.scrollY);
+    ctx.lineTo(arrow.x + 25, arrow.y + 4 - gameState.scrollY);
     ctx.closePath();
     ctx.fill();
 }
@@ -688,15 +715,15 @@ function drawEffects() {
     // 攻撃エフェクト
     if (player.isAttacking) {
         ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.fillRect(player.x - 10, player.y - 10, player.width + 20, player.height + 20);
+        ctx.fillRect(player.x - 10, player.y - 10 - gameState.scrollY, player.width + 20, player.height + 20);
     }
-    
+
     // ジャンプエフェクト
     if (player.isJumping) {
         ctx.strokeStyle = 'rgba(255, 107, 107, 0.5)';
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.arc(player.x + player.width/2, player.y + player.height + 5, 15, 0, Math.PI * 2);
+        ctx.arc(player.x + player.width/2, player.y + player.height + 5 - gameState.scrollY, 15, 0, Math.PI * 2);
         ctx.stroke();
     }
 }
