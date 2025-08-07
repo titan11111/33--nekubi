@@ -77,6 +77,14 @@ document.addEventListener('keydown',e=>{
 });
 document.addEventListener('keyup',e=>{keys[e.code]=false;});
 
+// allow control via postMessage from an external controller
+window.addEventListener('message',e=>{
+  const data=e.data;
+  if(!data||data.type!=='control')return;
+  keys[data.code]=data.pressed;
+  if(data.code==='KeyF'&&data.pressed)throwStone();
+});
+
 function throwStone(){
   const dir=player.facing; 
   stones.push({x:player.x+player.w/2,y:player.y+player.h/2,vx:dir.x*4,vy:dir.y*4,life:60});
