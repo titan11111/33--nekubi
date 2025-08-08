@@ -35,13 +35,14 @@ const player = {
 let enemies = [];
 let projectiles = []; // 手裏剣
 let enemyProjectiles = []; // 敵の矢
+let spawnedFloors = new Set();
 
 // フロア定義
 const floors = [
-    { y: 500, enemies: ['samurai', 'archer'] },
-    { y: 400, enemies: ['samurai', 'samurai', 'archer'] },
-    { y: 300, enemies: ['archer', 'samurai', 'archer'] },
-    { y: 200, enemies: ['samurai', 'archer', 'samurai'] },
+    { y: 500, enemies: ['samurai'] },
+    { y: 400, enemies: ['samurai', 'archer'] },
+    { y: 300, enemies: ['samurai', 'archer', 'spearman'] },
+    { y: 200, enemies: ['samurai', 'archer', 'spearman', 'shieldman'] },
     { y: 100, enemies: ['lord'] } // ボスフロア
 ];
 
@@ -159,7 +160,12 @@ function startGame() {
     gameState.scrollY = 0;
     
     resetPlayer();
-    generateEnemies();
+    enemies = [];
+    projectiles = [];
+    enemyProjectiles = [];
+    spawnedFloors = new Set();
+    spawnEnemiesForFloor(1);
+    spawnedFloors.add(1);
     updateUI();
 }
 
@@ -174,6 +180,7 @@ function restartGame() {
     enemies = [];
     projectiles = [];
     enemyProjectiles = [];
+    spawnedFloors = new Set();
 }
 
 // プレイヤーリセット
@@ -186,27 +193,39 @@ function resetPlayer() {
     player.invulnerable = false;
 }
 
-// 敵生成
-function generateEnemies() {
-    enemies = [];
-    floors.forEach(floor => {
-        floor.enemies.forEach((enemyType, index) => {
-            const enemyHeight = enemyType === 'lord' ? 60 : 45;
-            const enemy = {
-                type: enemyType,
-                x: 50 + (index * 100),
-                y: floor.y - enemyHeight,
-                width: enemyType === 'lord' ? 80 : 45,
-                height: enemyHeight,
-                health: enemyType === 'lord' ? 5 : 1,
-                direction: Math.random() > 0.5 ? 1 : -1,
-                speed: enemyType === 'samurai' ? 1 : 0.5,
-                shootTimer: 0,
-                patrolLeft: 50 + (index * 100) - 50,
-                patrolRight: 50 + (index * 100) + 50
-            };
-            enemies.push(enemy);
-        });
+// 指定したフロアの敵を生成
+function spawnEnemiesForFloor(floorIndex) {
+    const floor = floors[floorIndex - 1];
+    floor.enemies.forEach((enemyType, index) => {
+        const enemyHeight = enemyType === 'lord' ? 60 : 45;
+        let health = enemyType === 'lord' ? 5 : 1;
+        let speed = 0.5;
+        if (enemyType === 'samurai') {
+            speed = 1;
+        } else if (enemyType === 'spearman') {
+            speed = 1.2;
+        } else if (enemyType === 'shieldman') {
+            speed = 0.3;
+            health = 2;
+        } else if (enemyType === 'archer') {
+            speed = 0.5;
+        } else if (enemyType === 'lord') {
+            speed = 0;
+        }
+        const enemy = {
+            type: enemyType,
+            x: 50 + (index * 100),
+            y: floor.y - enemyHeight,
+            width: enemyType === 'lord' ? 80 : 45,
+            height: enemyHeight,
+            health: health,
+            direction: Math.random() > 0.5 ? 1 : -1,
+            speed: speed,
+            shootTimer: 0,
+            patrolLeft: 50 + (index * 100) - 50,
+            patrolRight: 50 + (index * 100) + 50
+        };
+        enemies.push(enemy);
     });
 }
 
@@ -329,15 +348,20 @@ function updateCurrentFloor() {
             floorNum = i + 1;
         }
     }
+    const previousFloor = gameState.currentFloor;
     gameState.currentFloor = floorNum;
+    if (gameState.currentFloor !== previousFloor && !spawnedFloors.has(gameState.currentFloor)) {
+        spawnEnemiesForFloor(gameState.currentFloor);
+        spawnedFloors.add(gameState.currentFloor);
+    }
     document.getElementById('current-floor').textContent = gameState.currentFloor;
 }
 
 // 敵更新
 function updateEnemies() {
     enemies.forEach(enemy => {
-        if (enemy.type === 'samurai') {
-            // 侍：左右パトロール
+        if (['samurai', 'spearman', 'shieldman'].includes(enemy.type)) {
+            // 近接系：左右パトロール
             enemy.x += enemy.speed * enemy.direction;
             if (enemy.x <= enemy.patrolLeft || enemy.x >= enemy.patrolRight) {
                 enemy.direction *= -1;
@@ -576,7 +600,7 @@ function drawPlayer() {
 function drawEnemy(enemy) {
     ctx.save();
     ctx.translate(enemy.x, enemy.y - gameState.scrollY);
-    
+
     if (enemy.type === 'samurai') {
         // 侍
         ctx.fillStyle = '#cc3333';
@@ -604,7 +628,49 @@ function drawEnemy(enemy) {
         
         ctx.fillStyle = '#8b4513';
         ctx.fillRect(33, 12, 4, 3);
-        
+
+    } else if (enemy.type === 'spearman') {
+        // 槍兵
+        ctx.fillStyle = '#228b22';
+        ctx.fillRect(14, 20, 17, 18);
+
+        ctx.fillStyle = '#ffdbab';
+        ctx.beginPath();
+        ctx.arc(22.5, 15, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 槍
+        ctx.strokeStyle = '#8b4513';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(35, 15);
+        ctx.lineTo(45, 5);
+        ctx.stroke();
+
+        ctx.strokeStyle = '#c0c0c0';
+        ctx.beginPath();
+        ctx.moveTo(45, 5);
+        ctx.lineTo(45, 25);
+        ctx.stroke();
+
+    } else if (enemy.type === 'shieldman') {
+        // 盾兵
+        ctx.fillStyle = '#555555';
+        ctx.fillRect(14, 20, 17, 18);
+
+        ctx.fillStyle = '#ffdbab';
+        ctx.beginPath();
+        ctx.arc(22.5, 15, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 盾
+        ctx.fillStyle = '#999999';
+        ctx.beginPath();
+        ctx.arc(35, 28, 8, -Math.PI / 2, Math.PI / 2);
+        ctx.lineTo(35, 20);
+        ctx.closePath();
+        ctx.fill();
+
     } else if (enemy.type === 'archer') {
         // 弓兵
         ctx.fillStyle = '#3366cc';
