@@ -19,8 +19,8 @@ let canvasHeight = 600;
 const player = {
     x: 200,
     y: 500,
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     velocityX: 0,
     velocityY: 0,
     onGround: false,
@@ -79,10 +79,10 @@ function resizeCanvas() {
     
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
-    
+
     // プレイヤー位置調整
     player.x = canvasWidth / 2 - player.width / 2;
-    player.y = canvasHeight - 100;
+    player.y = canvasHeight / 2 - player.height / 2;
 }
 
 // イベントリスナー設定
@@ -187,10 +187,10 @@ function restartGame() {
 // プレイヤーリセット
 function resetPlayer() {
     player.x = canvasWidth / 2 - player.width / 2;
-    player.y = floors[0].y - player.height;
+    player.y = canvasHeight / 2 - player.height / 2;
     player.velocityX = 0;
     player.velocityY = 0;
-    player.onGround = true;
+    player.onGround = false;
     player.invulnerable = false;
 }
 
@@ -580,12 +580,13 @@ function drawPlayer() {
         ctx.globalAlpha = 0.5;
     }
     
-    // 向きに応じて反転
+    // 向きに応じて反転と拡大
     if (player.direction === -1) {
-        ctx.scale(-1, 1);
-        ctx.translate(-player.x - player.width, player.y - gameState.scrollY);
+        ctx.translate(player.x + player.width, player.y - gameState.scrollY);
+        ctx.scale(-1.2, 1.2);
     } else {
         ctx.translate(player.x, player.y - gameState.scrollY);
+        ctx.scale(1.2, 1.2);
     }
     
     // 忍者の体
