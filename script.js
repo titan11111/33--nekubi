@@ -33,7 +33,8 @@ const player = {
 
 // 敵配列
 let enemies = [];
-let projectiles = []; // 手裏剣
+let projectiles = []; // 手裏剣や火炎弾
+const FIREBALL_HEAT_DENSITY = 1.0; // 温密度100%
 let enemyProjectiles = []; // 敵の矢
 let spawnedFloors = new Set();
 
@@ -244,17 +245,19 @@ function attackPlayer() {
     if (gameState.screen !== 'playing') return;
     if (!player.isAttacking) {
         player.isAttacking = true;
-        
-        // 手裏剣生成
+
+        // 火炎弾生成
         projectiles.push({
+            type: 'fireball',
             x: player.x + player.width / 2,
             y: player.y + player.height / 2,
             width: 20,
             height: 20,
             velocityX: player.direction * 8,
-            velocityY: 0
+            velocityY: 0,
+            temperatureDensity: FIREBALL_HEAT_DENSITY
         });
-        
+
         setTimeout(() => player.isAttacking = false, 300);
     }
 }
@@ -503,7 +506,13 @@ function render() {
     enemies.forEach(enemy => drawEnemy(enemy));
     
     // 発射物描画
-    projectiles.forEach(projectile => drawShuriken(projectile));
+    projectiles.forEach(projectile => {
+        if (projectile.type === 'fireball') {
+            drawFireball(projectile);
+        } else {
+            drawShuriken(projectile);
+        }
+    });
     enemyProjectiles.forEach(arrow => drawArrow(arrow));
     
     // エフェクト描画
@@ -731,6 +740,38 @@ function drawEnemy(enemy) {
         }
     }
     
+    ctx.restore();
+}
+
+// 火炎弾描画
+function drawFireball(fireball) {
+    ctx.save();
+    const centerX = fireball.x + fireball.width / 2;
+    const centerY = fireball.y + fireball.height / 2 - gameState.scrollY;
+    ctx.translate(centerX, centerY);
+    ctx.globalAlpha = fireball.temperatureDensity;
+    ctx.shadowColor = 'rgba(255,0,0,1)';
+    ctx.shadowBlur = 20;
+    ctx.globalCompositeOperation = 'lighter';
+
+    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, fireball.width / 2);
+    gradient.addColorStop(0, '#ffffff');
+    gradient.addColorStop(0.3, '#ffdd55');
+    gradient.addColorStop(1, '#ff0000');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(0, 0, fireball.width / 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    for (let i = 0; i < 4; i++) {
+        const sparkX = (Math.random() - 0.5) * fireball.width;
+        const sparkY = (Math.random() - 0.5) * fireball.height;
+        ctx.beginPath();
+        ctx.arc(sparkX, sparkY, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
     ctx.restore();
 }
 
