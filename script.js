@@ -848,6 +848,13 @@ function drawEffects() {
 document.addEventListener('DOMContentLoaded', function() {
     bgm = document.getElementById('bgm');
 
+    // ユーザーが操作したタイミングでBGMを再生
+    const enableBgm = () => {
+        bgm.play().catch(() => {});
+    };
+    document.addEventListener('pointerdown', enableBgm, { once: true });
+    document.addEventListener('keydown', enableBgm, { once: true });
+
     // モバイルデバイスの判定
     const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
