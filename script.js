@@ -14,6 +14,7 @@ let canvas;
 let ctx;
 let canvasWidth = 400;
 let canvasHeight = 600;
+let bgm;
 
 // プレイヤー（忍者）
 const player = {
@@ -160,7 +161,10 @@ function startGame() {
     gameState.life = 3;
     gameState.currentFloor = 1;
     gameState.scrollY = 0;
-    
+
+    bgm.currentTime = 0;
+    bgm.play();
+
     resetPlayer();
     enemies = [];
     projectiles = [];
@@ -177,12 +181,15 @@ function restartGame() {
     document.getElementById('clear-screen').style.display = 'none';
     document.getElementById('title-screen').style.display = 'block';
     document.getElementById('game-screen').style.display = 'none';
-    
+
     gameState.screen = 'title';
     enemies = [];
     projectiles = [];
     enemyProjectiles = [];
     spawnedFloors = new Set();
+
+    bgm.pause();
+    bgm.currentTime = 0;
 }
 
 // プレイヤーリセット
@@ -839,6 +846,8 @@ function drawEffects() {
 
 // ページ読み込み時の初期化
 document.addEventListener('DOMContentLoaded', function() {
+    bgm = document.getElementById('bgm');
+
     // モバイルデバイスの判定
     const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
