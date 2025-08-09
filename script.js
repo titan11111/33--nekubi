@@ -18,7 +18,8 @@ let canvasHeight = 600;
 // プレイヤー（忍者）
 const player = {
     x: 200,
-    y: 500,
+    // スタート時は上下の真ん中に配置
+    y: canvasHeight / 2 - 24,
     width: 48,
     height: 48,
     velocityX: 0,
